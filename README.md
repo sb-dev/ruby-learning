@@ -130,9 +130,13 @@ puts "x is NOT 3" unless x == 3
 ### Comparisons
 
 Order of precedence:
+
 1. <=, <, >, >= - Comparison
+
 2. ==, != - Equality
+
 3. && - Logical AND
+
 4. || - Logical OR
 
 ### Case Statement
