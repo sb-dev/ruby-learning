@@ -49,27 +49,31 @@ Variable scope is defined by a *block*. A block is a piece of code following a m
 
 ### Types of Variables
 
-* Constants:
+* **Constants**:
+If declared within a class or module, available anywhere within the context of that class or module. Otherwise, available everywhere within the Ruby script.
 ```ruby
 MY_CONSTANT = 'I am available throughout your app.'
 ```
 
-* Global variables:
+* **Global variables**:
+Available everywhere within the Ruby script.
 ```ruby
 $var = 'I am also available throughout your app.'
 ```
 
-* Class variables:
+* **Class variables**:
+Available from the class definition and any sub-classes. Not available from anywhere outside.
 ```ruby
 @@instances = 0
 ```
 
-* Instance variables:
+* **Instance variables**:
+Available only within a specific object, across all methods in a class instance. Not available directly from class definitions.
 ```ruby
 @var = 'I am available throughout the current instance of this class.'
 ```
 
-* Local variables:
+* **Local variables**:
 ```ruby
 var = 'I must be passed around to cross scope boundaries.'
 ```
@@ -198,9 +202,9 @@ end
 ### Loops
 **loop** takes a block, which is denoted by **{ ... }** or **do ... end**
 
-**next** jump to the next loop iteration.
+* **next** jump to the next loop iteration.
 
-**break** exit the loop immediately.
+* **break** exit the loop immediately.
 
 ```ruby
 i = 0
@@ -314,3 +318,31 @@ array << "another string"
 **delete_at** delete the value at a certain index from an array.
 
 **delete** delete all items that are equal to a certain value.
+
+**uniq** delete any duplicate values that exist, then return the result as a new array. With bang operator it becomes destructive.
+
+### Iterating Over an Array
+
+```ruby
+numbers.select { |number| number > 4 }
+```
+
+```ruby
+a.each_index { |i| puts "This is index #{i}" }
+```
+
+```ruby
+a.each_with_index { |val, idx| puts "#{idx+1}. #{val}" }
+```
+
+### Common Array Methods
+
+* **include?**
+
+* **flatten**
+
+* **sort**
+
+* **product**
+
+* **to_s**
