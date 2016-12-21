@@ -125,7 +125,7 @@ end
 add_three(5).times { puts 'this should print 8 times'}
 ```
 
-## Blocks and Procs
+### Blocks and Procs
 
 **Blocks**
 
@@ -380,17 +380,17 @@ array << "another string"
 => [1, "Bob", 4.33, "another string"]
 ```
 
-* **unshift** add value at the beginning of an array
+* **unshift** adds value at the beginning of an array
 
-* **delete_at** delete the value at a certain index from an array.
+* **delete_at** deletes the value at a certain index from an array.
 
-* **delete** delete all items that are equal to a certain value.
+* **delete** deletes all items that are equal to a certain value.
 
-* **uniq** delete any duplicate values that exist, then return the result as a new array. With bang operator it becomes destructive.
+* **uniq** deletes any duplicate values that exist, then return the result as a new array. With bang operator it becomes destructive.
 
 ### Iterating Over an Array
 
-* **select**
+* **select** runs the code in the block once for each item in the collection, if the logic returns TRUE, then it adds the item to a new array which it returns when the iteration is complete.
 
 ```ruby
 numbers.select { |number| number > 4 }
@@ -408,9 +408,9 @@ a.each_index { |idx| puts "This is index #{idx}" }
 a.each_with_index { |val, idx| puts "#{idx+1}. #{val}" }
 ```
 
-* **each** if given a block, *each* runs the code in the block once for each element in the collection and returns the collection it was invoked on. If no block is given, it returns an *Enumerator*.
+* **each** if given a block, *each* runs the code in the block once for each item in the collection and returns the collection it was invoked on. If no block is given, it returns an *Enumerator*.
 
-* **map** when given a block, create and return a new array containing the values returned by the block. If no block is given, map returns an *Enumerator*.
+* **map** when given a block, *map* creates and returns a new array containing the values returned by the block. If no block is given, map returns an *Enumerator*.
 
 ### Common Array Methods
 
@@ -700,4 +700,348 @@ end
 
 ```ruby
 zero.each { |element| puts element } rescue puts "Can't do that!"
+```
+
+## The object model
+
+### Classes
+
+```ruby
+class GoodDog
+end
+
+sparky = GoodDog.new
+```
+
+### Modules
+
+A **module** is a collection of behaviors that is useable in other classes via **mixins**.
+
+```ruby
+module Speak
+  def speak(sound)
+    puts "#{sound}"
+  end
+end
+
+class GoodDog
+  include Speak
+end
+
+class HumanBeing
+  include Speak
+end
+
+sparky = GoodDog.new
+sparky.speak("woof!")
+bob = HumanBeing.new
+bob.speak("Hello!")
+```
+
+### Initializing a New Object
+
+```ruby
+class GoodDog
+  def initialize
+    puts "This object was initialized!"
+  end
+end
+```
+
+**initialize** method gets called every time a new object is created
+
+### Instance Variables
+
+```ruby
+class GoodDog
+    def initialize(name)
+        @name = name
+    end
+end
+
+sparky = GoodDog.new("Sparky")
+```
+
+### Instance Method
+
+```ruby
+class GoodDog
+  def initialize(name)
+    @name = name
+  end
+
+  def speak
+    "woof!"
+  end
+end
+
+sparky = GoodDog.new("Sparky")
+puts sparky.speak
+```
+
+### Accessor methods
+
+```ruby
+class GoodDog
+  def initialize(name)
+    @name = name
+  end
+
+  # Getter method
+  def name
+    @name
+  end
+
+  # Setter method
+  def name=(name)
+    @name = name
+  end
+end
+```
+
+* **attr_accessor** automatically create getter and setter methods
+
+```ruby
+class GoodDog
+  attr_accessor :name, :height, :weight
+
+  def initialize(name)
+    @name = name
+  end
+end
+```
+
+* **attr_reader** only create the getter method
+
+* **attr_writer** only create the setter method
+
+### Accessor Methods in Action
+
+```ruby
+def speak
+  "#{self.name} says arf!"
+end
+
+def change_info(n, h, w)
+  self.name = n
+  self.height = h
+  self.weight = w
+end
+```
+
+* **@** symbol removed to avoid referencing the instance variable and call the getter method instead
+
+### Class methods
+
+```ruby
+def self.what_am_i
+  "I'm a GoodDog class!"
+end
+```
+
+### Class variables
+
+```ruby
+class GoodDog
+  @@number_of_dogs = 0
+
+  def initialize
+    @@number_of_dogs += 1
+  end
+
+  def self.total_number_of_dogs
+    @@number_of_dogs
+  end
+end
+```
+
+### Constants
+
+```ruby
+class GoodDog
+  DOG_YEARS = 7
+
+  attr_accessor :name, :age
+
+  def initialize(n, a)
+    self.name = n
+    self.age  = a * DOG_YEARS
+  end
+end
+```
+
+### The to_s Method
+
+* **puts** method automatically calls to_s on its argument, but **p** doesn't
+
+* *p sparky* is equivalent to *puts sparky.inspect*
+
+* **to_s** is also automatically called in string interpolation.
+
+## Inheritance
+
+### Class Inheritance
+
+```ruby
+class Animal
+  def speak
+    "Hello!"
+  end
+end
+
+class GoodDog < Animal
+end
+
+class Cat < Animal
+end
+```
+
+### super
+
+**super** call methods up the inheritance hierarchy. When calling super from within a method, it will search the inheritance hierarchy for a method by the same name and then invoke it.
+
+```ruby
+class Animal
+  def speak
+    "Hello!"
+  end
+end
+
+class GoodDog < Animal
+  def speak
+    super + " from GoodDog class"
+  end
+end
+```
+
+```ruby
+class Animal
+  attr_accessor :name
+
+  def initialize(name)
+    @name = name
+  end
+end
+
+class GoodDog < Animal
+  def initialize(color)
+    super
+    @color = color
+  end
+end
+```
+
+* **super** automatically forwards the arguments that were passed to the method from which super is called
+
+### Mixing in Modules
+
+```ruby
+module Swimmable
+  def swim
+    "I'm swimming!"
+  end
+end
+
+class Animal; end
+
+class Fish < Animal
+  include Swimmable
+end
+
+class Mammal < Animal
+end
+
+class Cat < Mammal
+end
+
+class Dog < Mammal
+  include Swimmable
+end
+```
+
+### Inheritance vs Modules
+
+If it's an "is-a" relationship, choose class inheritance. If it's a "has-a" relationship, choose modules. Example: a dog "is an" animal; a dog "has an" ability to swim.
+
+### Namespacing
+
+```ruby
+module Mammal
+  class Dog
+    def speak(sound)
+      p "#{sound}"
+    end
+  end
+
+  class Cat
+    def say_name(name)
+      p "#{name}"
+    end
+  end
+end
+
+buddy = Mammal::Dog.new
+kitty = Mammal::Cat.new
+```
+
+### Container
+
+```ruby
+module Mammal
+  def self.some_out_of_place_method(num)
+    num ** 2
+  end
+end
+
+value = Mammal.some_out_of_place_method(4)
+value = Mammal::some_out_of_place_method(4)
+```
+
+## Private, Protected, and Public
+
+### Private
+
+* Private methods are not accessible outside of the class definition at all, and are only accessible from inside the class when called without self.
+
+```ruby
+class GoodDog
+  DOG_YEARS = 7
+
+  attr_accessor :name, :age
+
+  def initialize(n, a)
+    self.name = n
+    self.age = a
+  end
+
+  def public_disclosure
+    "#{self.name} in human years is #{human_years}"
+  end  
+
+  private
+
+  def human_years
+    age * DOG_YEARS
+  end
+end
+```
+
+### Protected
+
+* From outside the class, protected methods act just like private methods.
+
+* From inside the class, protected methods are accessible just like public methods.
+
+```ruby
+class Animal
+  def a_public_method
+    "Will this work? " + self.a_protected_method
+  end
+
+  protected
+
+  def a_protected_method
+    "Yes, I'm protected!"
+  end
+end
 ```
