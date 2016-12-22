@@ -1,6 +1,6 @@
 ## Ruby On Rails
 
-### Basics
+## Basics
 
 * Generate Ruby On Rails app
 ```bash
@@ -17,7 +17,7 @@ bundle install
 rails server
 ```
 
-### Create model
+## Create model
 
 * Generate model
 ```bash
@@ -57,7 +57,7 @@ rake db:seed
 generate controller Messages
 ```
 
-### Add view action
+## Add view action
 
 * Create new route and map it to a controller's index action, edit config/routes.rb
 ```ruby
@@ -89,13 +89,13 @@ end
 ```html
 <% @messages.each do |message| %>
 <div class="message">
-<p class="content"><%= message.content %></p>
-<p class="time"><%= message.created_at %></p>
+    <p class="content"><%= message.content %></p>
+    <p class="time"><%= message.created_at %></p>
 </div>
 <% end %>
 ```
 
-### Add create actions
+## Add create actions
 
 * Add route, edit config/routes.rb
 ```ruby
@@ -149,100 +149,5 @@ end
 * Add link, edit app/views/messages/index.html.erb
 ```html
 <%= link_to 'New Message', "messages/new" %>
-<% end %>
-```
-
-### Create relationship
-
-* Generate a model named Tag.
-
-* Generate a model named Destination.
-
-* Update Tag, edit app/models/tag.rb
-```ruby
-class Tag < ActiveRecord::Base
-  has_many :destinations
-end
-```
-
-*A single Tag can have multiple Destinations*
-
-* Update Tag, edit app/models/destination.rb
-```ruby
-class Destination < ActiveRecord::Base
-  belongs_to :tag
-end
-```
-
-*Destination belongs to a single Tag*
-
-* Update migration files, in db/migrate/
-
-```ruby
-class CreateTags < ActiveRecord::Migration
-  def change
-    create_table :tags do |t|
-      t.string :title
-      t.string :image
-      t.timestamps
-    end
-  end
-end
-```
-
-```ruby
-class CreateDestinations < ActiveRecord::Migration
-  def change
-    create_table :destinations do |t|
-      t.string :name
-      t.string :image
-      t.string :description
-      t.references :tag
-      t.timestamps
-    end
-  end
-end
-```
-
-* Run migration to update the database
-```bash
-rake db:migrate
-```
-
-* Seed the database (travel_app_seeds.rb)
-```bash
-rake db:seed
-```
-
-* Generate controller Tags
-
-```bash
-rails generate controller Tags
-```
-
-```ruby
-class TagsController < ApplicationController
-    def index
-      @tags = Tag.all
-    end
-end
-```
-
-* Update route
-
-```ruby
-Rails.application.routes.draw do
-  get 'tags' => 'tags#index'
-end
-```
-
-* Update view, app/views/tags/index.html.erb
-
-```html
-<% @tags.each do |tag| %>
-<div class="card col-xs-4">
-    <img src="<%= tag.image %>" />
-    <h2> <%= tag.title %> </h2>
-</div>
 <% end %>
 ```
