@@ -3,6 +3,7 @@
 ## Create model
 
 * Update migration file, add role
+
 ```ruby
 class CreateUsers < ActiveRecord::Migration
   def change
@@ -23,6 +24,7 @@ end
 * Run the migration, add editor method
 
 * Update user class
+
 ```ruby
 class User < ActiveRecord::Base
   has_secure_password
@@ -41,13 +43,12 @@ rails console
 end
 ```
 
-## Add restriction feature
+## Add Editor restriction feature
 
 * Update Application controller, edit app/controllers/application_controller.rb
+
 ```ruby
 class ApplicationController < ActionController::Base
-  # Prevent CSRF attacks by raising an exception.
-  # For APIs, you may want to use :null_session instead.
   protect_from_forgery with: :exception
 
    helper_method :current_user
@@ -68,6 +69,7 @@ end
 ```
 
 * Update controllers which require authentication, add another *before_action*
+
 ```ruby
 class RecipesController < ApplicationController
 
@@ -105,4 +107,54 @@ class RecipesController < ApplicationController
 end
 ```
 
-* 
+* Update view, edit app/views/recipes/show.html
+
+```html
+<% if current_user && current_user.editor? %>
+  <p class="recipe-edit">
+    <%= link_to "Edit Recipe", edit_recipe_path(@recipe.id) %>
+  </p>
+<% end %>
+```
+
+## Add Admin restriction feature
+
+* Update User model
+
+```ruby
+class User < ActiveRecord::Base
+
+  has_secure_password
+
+  def editor?
+    self.role == 'editor'
+  end
+
+  def admin?
+    self.role == 'admin'
+  end
+
+end
+```
+
+* Update Application controller
+
+```ruby
+def require_admin
+  redirect_to '/' unless current_user.admin?
+end
+```
+
+* Update recipe controller
+
+```ruby
+before_action :require_admin, only: [:destroy]
+```
+
+* update view, edit app/views/recipes/show.html.erb
+
+```html
+<% if current_user && current_user.admin? %>
+  <p class="recipe-delete"><%= link_to "Delete", recipe_path(@recipe), method: "delete" %><p>
+<% end %>
+```
