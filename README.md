@@ -693,6 +693,8 @@ begin
     answer = number / divisor
 rescue ZeroDivisionError => e
     puts e.message
+ensure
+    # Always do
 end
 ```
 
